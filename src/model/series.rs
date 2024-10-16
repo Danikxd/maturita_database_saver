@@ -7,7 +7,8 @@ pub struct Model {
     pub id: i64,
     pub channel_id: i64,
     pub title: String,
-    pub time: DateTimeUtc,
+    pub start: DateTimeUtc,
+    pub end: DateTimeUtc
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]

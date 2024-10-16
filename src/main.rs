@@ -40,6 +40,9 @@ struct Channel {
 struct Programme {
     #[serde(rename = "start", deserialize_with = "deserialize_datetime")]
     start: DateTime<Utc>,
+    #[serde(rename = "stop", deserialize_with = "deserialize_datetime")]
+    stop: DateTime<Utc>,
+
     #[serde(rename = "title")]
     title: String,
     #[serde(rename = "channel")]
@@ -102,7 +105,8 @@ async fn save_programmes(
             let new_programme = series::ActiveModel {
                 channel_id: Set(channel_id),
                 title: Set(programme.title.clone()),
-                time: Set(programme.start),
+                start: Set(programme.start),
+                end: Set(programme.stop),
                 ..Default::default()
             };
 
