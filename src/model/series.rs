@@ -8,7 +8,8 @@ pub struct Model {
     pub channel_id: i64,
     pub title: String,
     pub start: DateTimeUtc,
-    pub end: DateTimeUtc
+    pub end: DateTimeUtc,
+    pub desc: Option<String>
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]

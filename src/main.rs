@@ -12,11 +12,11 @@ use std::collections::HashMap;
 use chrono::{DateTime, Utc};
 
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, ConnectionTrait, Database, DatabaseConnection, DatabaseTransaction,
+    ActiveModelTrait, ColumnTrait, ConnectionTrait, Database,  // DatabaseConnection, DatabaseTransaction,
     EntityTrait, QueryFilter, Set,
 };
 use tv_channels::Entity as ChannelEntity;
-use series::Entity as SeriesEntity;
+//use series::Entity as SeriesEntity;
 
 use dotenv::dotenv;
 
@@ -47,6 +47,9 @@ struct Programme {
     title: String,
     #[serde(rename = "channel")]
     channel_id: String,
+    #[serde(rename = "desc")]
+    desc: Option<String>
+
 }
 
 fn deserialize_datetime<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
@@ -107,6 +110,7 @@ async fn save_programmes(
                 title: Set(programme.title.clone()),
                 start: Set(programme.start),
                 end: Set(programme.stop),
+                desc: Set(programme.desc.clone()), // Keep it as an Option
                 ..Default::default()
             };
 
