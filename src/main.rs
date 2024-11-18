@@ -11,6 +11,10 @@ use std::fs::read_to_string;
 use std::collections::HashMap;
 use chrono::{DateTime, Utc};
 
+
+
+
+
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, ConnectionTrait, Database,  // DatabaseConnection, DatabaseTransaction,
     EntityTrait, QueryFilter, Set,
@@ -68,6 +72,7 @@ async fn get_channel_ids(
     xml_channels: &[Channel],
 ) -> Result<HashMap<String, i64>, sea_orm::DbErr> {
     let display_names: Vec<String> = xml_channels.iter().map(|c| c.display_name.clone()).collect();
+   
 
     // Query the database for matching channels
     let channels = ChannelEntity::find()
@@ -94,6 +99,8 @@ async fn get_channel_ids(
         }
     }
 
+  
+          
     Ok(xml_channel_to_db_id)
 }
 
@@ -102,6 +109,8 @@ async fn save_programmes(
     programmes: &[Programme],
     channel_mapping: HashMap<String, i64>,
 ) -> Result<(), sea_orm::DbErr> {
+
+    let mut counter = 0;
     for programme in programmes {
         if let Some(&channel_id) = channel_mapping.get(&programme.channel_id) {
             // Create an ActiveModel instance
@@ -115,6 +124,8 @@ async fn save_programmes(
             };
 
             // Insert the programme into the Series table
+            counter = counter + 1;
+            eprintln!("jedem {}", counter);
             new_programme.insert(db).await?;
         } else {
             eprintln!(
@@ -129,8 +140,10 @@ async fn save_programmes(
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+
+  
     // Read the XML data
-    let xml_data = read_to_string("guide.xml")?;
+    let xml_data = read_to_string("../epg/guide.xml")?;
     let tv: TV = from_str(&xml_data)?;
 
   
@@ -148,11 +161,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     let channel_mapping = get_channel_ids(&txn, &tv.channels).await?;
 
+    
+
   
-    save_programmes(&txn, &tv.programmes, channel_mapping).await?;
+   //  save_programmes(&txn, &tv.programmes, channel_mapping).await?;
 
     
-    txn.commit().await?;
+   txn.commit().await?;
+
+   
 
     Ok(())
 }
